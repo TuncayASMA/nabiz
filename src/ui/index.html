@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>Nabız</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="widget">
+    <header class="titlebar">
+      <div class="brand"><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="3" y="13" width="4" height="11" rx="2"/><rect x="12" y="4" width="4" height="20" rx="2"/><rect x="21" y="9" width="4" height="15" rx="2"/></svg><span>Nabız<span class="brand-dot">.</span></span></div>
+      <div class="window-actions">
+        <button class="icon-button" id="pin" title="Üstte sabitle" aria-label="Üstte sabitle" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="m15 3 6 6-4 1-3 5-3-3-5 6-1-1 6-5-3-3 5-3z"/></svg></button>
+        <button class="icon-button" id="settings-toggle" title="Ayarlar" aria-label="Ayarlar" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 17h16M8 4v6m8 4v6"/></svg></button>
+        <button class="icon-button" id="hide" title="Simge durumuna küçült" aria-label="Simge durumuna küçült"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button>
+      </div>
+    </header>
+    <section class="intro"><div><h1>Kullanımına bir bakış.</h1><p>Yapay zekâ hesapların, tek yerde.</p></div><span class="live-pill" id="connection-count"><i></i>Bağlanıyor</span></section>
+    <main id="providers" aria-label="Servis kullanımları"></main>
+    <section class="settings" id="settings" hidden aria-label="Widget ayarları">
+      <div class="settings-heading"><h2>Tercihler</h2><span>Bu bilgisayar</span></div>
+      <label class="setting-row" for="startup"><span>Oturum açınca başlat<small>Bilgisayara giriş yaptığında hazır olsun.</small></span><input type="checkbox" role="switch" id="startup"></label>
+      <label class="setting-row" for="interval"><span>Otomatik yenileme</span><select id="interval"><option value="2">2 dakika</option><option value="5">5 dakika</option><option value="10">10 dakika</option><option value="15">15 dakika</option></select></label>
+      <form id="eleven-key-form" class="key-form"><label for="eleven-key">ElevenLabs API anahtarı <span id="key-state"></span></label><div><input type="password" id="eleven-key" autocomplete="off" spellcheck="false" placeholder="Yeni anahtar gir" aria-label="ElevenLabs API anahtarı"><button class="connect-button" type="submit">Kaydet</button></div><small id="storage-help">Sistem anahtarlığı ile şifrelenir. Yalnızca kullanım bilgisi okunur.</small></form>
+      <p class="settings-help">Hesap bağlantıları mevcut CLI oturumlarını kullanır. Girişten sonra paneli yenile. ChatGPT kartı Codex kotasını gösterir.</p>
+      <button class="text-button quit-button" id="quit">Uygulamadan çık <span>↗</span></button>
+    </section>
+    <div class="toast" role="status" id="toast" hidden></div>
+    <footer><button id="refresh" class="refresh-button"><svg viewBox="0 0 24 24"><path d="M20 8a8 8 0 1 0 0 8M20 3v5h-5"/></svg><span>Yenile</span></button><span id="refresh-time">Kotalar kontrol ediliyor</span><span class="footer-dot" title="Kişisel masaüstü widget'ı"></span></footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

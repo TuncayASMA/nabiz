@@ -1,0 +1,49 @@
+appId: io.github.nabiz.app
+productName: Nabız
+executableName: Nabiz
+copyright: Copyright © 2026 Nabız contributors
+asar: true
+npmRebuild: false
+directories:
+  output: release
+  buildResources: assets
+# Explicit allowlist: no home directories, caches, screenshots or local notes enter binaries.
+files:
+  - src/**/*
+  - assets/kota.png
+  - assets/kota.ico
+  - LICENSE
+  - THIRD_PARTY_NOTICES.md
+  - package.json
+artifactName: Nabiz-${version}-${os}-${arch}.${ext}
+win:
+  icon: assets/kota.ico
+  target:
+    - nsis
+    - zip
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  shortcutName: Nabız
+  artifactName: Nabiz-${version}-windows-${arch}-setup.${ext}
+mac:
+  icon: assets/kota.png
+  category: public.app-category.utilities
+  target:
+    - dmg
+    - zip
+  identity: null
+  notarize: false
+linux:
+  icon: assets/kota.png
+  category: Utility
+  target:
+    - AppImage
+    - tar.gz
+  desktop:
+    entry:
+      StartupWMClass: Nabiz
+      Comment: AI subscription usage at a glance
+publish: null

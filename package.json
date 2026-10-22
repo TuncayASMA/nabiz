@@ -1,0 +1,35 @@
+{
+  "name": "nabiz",
+  "productName": "Nabız",
+  "version": "0.2.0",
+  "description": "A private desktop usage monitor for Claude, Codex, Gemini, Grok and ElevenLabs",
+  "private": true,
+  "main": "src/main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.cjs",
+    "test:ui": "node scripts/smoke.cjs",
+    "package": "electron-builder --dir --publish never",
+    "demo": "electron . --demo",
+    "dist": "electron-builder --publish never",
+    "dist:dir": "electron-builder --dir --publish never",
+    "audit:public": "node scripts/audit-public.cjs",
+    "screenshots": "node scripts/screenshots.cjs"
+  },
+  "devDependencies": {
+    "@electron/asar": "4.3.1",
+    "electron": "45.0.0",
+    "electron-builder": "26.15.3",
+    "playwright-core": "^1.64.1"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Nabız contributors",
+    "url": "https://github.com/TuncayASMA/nabiz"
+  },
+  "homepage": "https://github.com/TuncayASMA/nabiz",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TuncayASMA/nabiz.git"
+  }
+}

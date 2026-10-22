@@ -1,0 +1,29 @@
+name: Bug / compatibility report
+description: Report a problem without sharing private account data
+body:
+  - type: markdown
+    attributes:
+      value: "Never attach API keys, auth files, usage caches or raw CLI logs. Redact screenshots. For a security issue, use private vulnerability reporting."
+  - type: input
+    id: version
+    attributes:
+      label: Nabız version
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: OS version and CPU (x64 / ARM64)
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: What happened, and how can we reproduce it?
+      description: Include the provider and CLI version if relevant. Do not include account identifiers.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
