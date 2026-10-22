@@ -104,7 +104,7 @@ Get-FileHash -Algorithm SHA256 .\Nabiz-VERSION-windows-x64-setup.exe
 # macOS
 shasum -a 256 Nabiz-VERSION-mac-arm64.dmg
 # Linux
-sha256sum Nabiz-VERSION-linux-x64.AppImage
+sha256sum Nabiz-VERSION-linux-x86_64.AppImage
 ```
 
 A matching hash detects a changed download. It does not replace publisher

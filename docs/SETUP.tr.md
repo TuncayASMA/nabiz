@@ -92,7 +92,7 @@ Get-FileHash -Algorithm SHA256 .\Nabiz-SURUM-windows-x64-setup.exe
 # macOS
 shasum -a 256 Nabiz-SURUM-mac-arm64.dmg
 # Linux
-sha256sum Nabiz-SURUM-linux-x64.AppImage
+sha256sum Nabiz-SURUM-linux-x86_64.AppImage
 ```
 
 Eşleşme indirdiğin dosyanın değişmediğini denetler; yayıncı imzası veya bağımsız
