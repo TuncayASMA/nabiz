@@ -9,7 +9,16 @@ needed to run the packaged app**. Some provider CLIs have their own prerequisite
 You need your own accounts and any subscription required by each provider. You
 can connect only one or two services; the others remain disconnected.
 
-The current interface is Turkish. Useful labels:
+## Interface language
+
+The UI supports **English and Turkish**. On a new installation, the first system
+language selects Turkish when it starts with `tr`, and English otherwise.
+Open the sliders icon, then **Preferences → Language** to switch instantly.
+The choice is saved; menus, errors, usage labels, dates and numbers follow it.
+Your accounts do not need to reconnect. Upgrades from the Turkish-only version
+retain Turkish until you change it. The app's name stays **Nabız** in both languages.
+
+If you are following a screenshot in Turkish, these labels may help:
 
 | Label | Meaning |
 | --- | --- |
@@ -33,7 +42,7 @@ on ARM or ARM Linux. On Linux/macOS, `uname -m` reports `x86_64` (x64) or
 1. Download `Nabiz-VERSION-windows-ARCH-setup.exe`.
 2. Open it, choose a per-user installation folder, and finish the wizard.
 3. Open the **Nabız** desktop or Start menu shortcut.
-4. Optional: turn on **Oturum açınca başlat** in settings.
+4. Optional: turn on **Launch at login** in settings.
 
 Portable option: extract **all** files from `Nabiz-VERSION-win-ARCH.zip` into a
 permanent folder and run `Nabiz.exe`. Do not run the executable inside the ZIP
@@ -122,7 +131,7 @@ The connect button copies a command; paste it into your own Terminal/PowerShell.
 
 1. Install [Claude Code](https://code.claude.com/docs/en/setup).
 2. Run `claude auth login`, and choose the Claude account/subscription you want to monitor.
-3. Complete the browser login, return to Nabız, and press **Yenile**.
+3. Complete the browser login, return to Nabız, and press **Refresh**.
 
 Claude credentials are stored in the CLI's own credential file on Windows/Linux
 and normally in macOS Keychain. Nabız requests only the named `Claude
@@ -177,7 +186,7 @@ again. The displayed period and shared-pool note come from the billing response.
 
 1. Sign into [ElevenLabs](https://elevenlabs.io/app) and create your own API key.
 2. Give it the **User: Read** permission needed to read your subscription.
-3. Open Nabız settings and enter it in **ElevenLabs API anahtarı** → **Kaydet**.
+3. Open Nabız settings and enter it in **ElevenLabs API anahtarı** → **Save**.
 4. The input clears immediately; a stored key is never displayed back to you.
 
 Only [subscription data](https://elevenlabs.io/docs/api-reference/user/subscription/get)

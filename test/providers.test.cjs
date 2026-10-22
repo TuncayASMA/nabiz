@@ -1,6 +1,8 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { parseCodex, parseClaude, parseGemini, parseAntigravity, parseGrok, parseElevenLabs, DEFINITIONS, requestJson, ProviderError } = require('../src/providers.cjs');
+const { resolve } = require('../src/ui/i18n.js');
+const tr = value => resolve('tr', value);
 const { retainReading, UsageStore } = require('../src/store.cjs');
 const fs = require('node:fs');
 const os = require('node:os');
@@ -9,15 +11,15 @@ const path = require('node:path');
 test('Codex reports a primary weekly window without inventing a five-hour quota', () => {
   const result = parseCodex({ rateLimits: { planType: 'prolite', primary: { usedPercent: 30, windowDurationMins: 10080, resetsAt: 1793083744 }, secondary: null }, rateLimitResetCredits: { availableCount: 3 } });
   assert.equal(result.quotas.length, 1);
-  assert.equal(result.quotas[0].label, 'Haftalık');
+  assert.equal(tr(result.quotas[0].label), 'Haftalık');
   assert.equal(result.quotas[0].used, 30);
   assert.equal(result.plan, 'Pro Lite');
-  assert.match(result.note, /^3 /);
+  assert.match(tr(result.note), /^3 /);
 });
 test('Codex selects the codex bucket, preserving zero usage', () => {
   const result = parseCodex({ rateLimits: { primary: { usedPercent: 95 } }, rateLimitsByLimitId: { codex: { primary: { usedPercent: 0, windowDurationMins: 300 } } } });
   assert.equal(result.quotas[0].used, 0);
-  assert.equal(result.quotas[0].label, '5 saatlik');
+  assert.equal(tr(result.quotas[0].label), '5 saatlik');
 });
 test('Claude omits absent model buckets and preserves zero', () => {
   const result = parseClaude({ five_hour: { utilization: 0 }, seven_day: { utilization: 72 }, seven_day_opus: null }, 'pro');
@@ -34,9 +36,9 @@ test('Gemini full quota may omit remainingAmount; separate model buckets stay se
 });
 test('Grok respects the period reported by the service', () => {
   const result = parseGrok({ config: { creditUsagePercent: 2.5, currentPeriod: { type: 'USAGE_PERIOD_TYPE_WEEKLY', end: '2026-10-28T12:00:00Z' }, isUnifiedBillingUser: true } });
-  assert.equal(result.quotas[0].label, 'Haftalık');
+  assert.equal(tr(result.quotas[0].label), 'Haftalık');
   assert.equal(result.quotas[0].used, 2.5);
-  assert.match(result.note, /ortak/);
+  assert.match(tr(result.note), /ortak/);
 });
 test('Antigravity retains separate Argon and shared pools and verifies no model turns ran', () => {
   const data = { num_turns: 0, command: { name: 'usage', data: { groups: [
@@ -46,14 +48,14 @@ test('Antigravity retains separate Argon and shared pools and verifies no model 
   ] } } };
   const result = parseAntigravity(data);
   assert.deepEqual(result.quotas.map(q => q.used), [35, 0, 48]);
-  assert.match(result.quotas[0].label, /Argon/);
+  assert.match(tr(result.quotas[0].label), /Argon/);
   assert.throws(() => parseAntigravity({ ...data, num_turns: 1 }), ProviderError);
 });
 test('ElevenLabs uses account character totals, preserving overage and renewal period', () => {
   const result = parseElevenLabs({ character_count: 15000, character_limit: 30000, tier: 'creator', character_refresh_period: 'monthly_period', next_character_count_reset_unix: 1893456000 });
   assert.equal(result.quotas[0].used, 50);
-  assert.equal(result.quotas[0].label, 'Aylık karakter');
-  assert.match(result.note, /15.000 kaldı/);
+  assert.equal(tr(result.quotas[0].label), 'Aylık karakter');
+  assert.match(tr(result.note), /15.000 kaldı/);
   assert.equal(parseElevenLabs({ character_count: 150, character_limit: 100 }).quotas[0].used, 150);
   assert.throws(() => parseElevenLabs({ character_count: 1, character_limit: 0 }), ProviderError);
 });

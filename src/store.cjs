@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { DEFINITIONS, ProviderError } = require('./providers.cjs');
+const { message: m } = require('./ui/i18n.js');
 
 function readJson(file, fallback) { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return fallback; } }
 function writeJson(file, data) {
@@ -10,10 +11,10 @@ function writeJson(file, data) {
   fs.renameSync(temp, file);
 }
 function retainReading(previous, error, now) {
-  const safe = error instanceof ProviderError ? error : new ProviderError('network', 'Veri alınamadı. Tekrar denenecek.');
+  const safe = error instanceof ProviderError ? error : new ProviderError('network', m('error.read'));
   // An authentication change must not leave another account's readings visible.
   const old = safe.code === 'auth' || safe.code === 'access' ? null : previous;
-  return { ...(old || { quotas: [], updatedAt: null }), status: old?.updatedAt ? 'stale' : safe.code === 'auth' ? 'auth' : 'error', error: safe.message, checkedAt: now };
+  return { ...(old || { quotas: [], updatedAt: null }), status: old?.updatedAt ? 'stale' : safe.code === 'auth' ? 'auth' : 'error', error: safe.displayMessage, checkedAt: now };
 }
 class UsageStore {
   constructor(providers, cacheFile, onUpdate = () => {}) {
@@ -22,7 +23,7 @@ class UsageStore {
     const cache = readJson(cacheFile, {});
     for (const { id } of DEFINITIONS) {
       const c = cache[id];
-      this.state[id] = c && Array.isArray(c.quotas) && c.updatedAt ? { ...c, status: 'stale', error: 'Son ölçüm · güncelleniyor' } : { quotas: [], status: 'loading', updatedAt: null };
+      this.state[id] = c && Array.isArray(c.quotas) && c.updatedAt ? { ...c, status: 'stale', error: m('error.cached') } : { quotas: [], status: 'loading', updatedAt: null };
     }
   }
   snapshot() { return DEFINITIONS.map(d => ({ ...d, ...this.state[d.id] })); }

@@ -7,6 +7,8 @@ const { UsageStore, readJson, writeJson } = require('./store.cjs');
 const { createSecretStore } = require('./secrets.cjs');
 const { setAutoStart } = require('./platform.cjs');
 const { sampleProviders } = require('./demo.cjs');
+const i18n = require('./ui/i18n.js');
+const t = (key, params) => i18n.text(settings?.language || 'en', key, params);
 
 const testMode = process.argv.includes('--smoke') || process.argv.includes('--demo');
 const dataArg = process.argv.find(a => a.startsWith('--data-dir='));
@@ -27,12 +29,12 @@ else {
   app.whenReady().then(start).catch(() => app.quit());
 }
 function snapshot() {
-  return { providers: usage.snapshot(), refreshing: Boolean(usage.active), settings, persistenceError: Boolean(usage.persistenceError), elevenKeyPresent: !testMode && Boolean(secrets?.get()), secureStorageAvailable: testMode || Boolean(secrets?.available()), testMode };
+  return { providers: usage.snapshot().map(p => i18n.provider(settings.language, p)), refreshing: Boolean(usage.active), settings, persistenceError: Boolean(usage.persistenceError), elevenKeyPresent: !testMode && Boolean(secrets?.get()), secureStorageAvailable: testMode || Boolean(secrets?.available()), testMode };
 }
 function emit() {
   if (win && !win.isDestroyed() && usage) win.webContents.send('kota:state', snapshot());
   if (tray && usage) {
-    const lines = usage.snapshot().map(p => `${p.name}: ${p.quotas.length ? '%' + Math.round(p.quotas[0].used) + (p.status === 'live' ? '' : ' (eski)') : 'bağlı değil'}`);
+    const lines = usage.snapshot().map(p => `${p.name}: ${p.quotas.length ? Math.round(p.quotas[0].used) + '%' + (p.status === 'live' ? '' : ` (${t('trayStale')})`) : t('notConnected')}`);
     tray.setToolTip(['Nabız', ...lines].join('\n').slice(0, 127));
   }
 }
@@ -41,6 +43,7 @@ function autostart(enabled) {
   if (!testMode) setAutoStart(app, enabled);
 }
 function setSettings(patch) {
+  if (i18n.supported.includes(patch.language)) settings.language = patch.language;
   if (typeof patch.pinned === 'boolean') { settings.pinned = patch.pinned; win.setAlwaysOnTop(settings.pinned); }
   if (typeof patch.startAtLogin === 'boolean') { autostart(patch.startAtLogin); settings.startAtLogin = patch.startAtLogin; }
   if ([2, 5, 10, 15].includes(patch.intervalMinutes)) { settings.intervalMinutes = patch.intervalMinutes; schedule(); }
@@ -52,19 +55,19 @@ function schedule() {
 }
 function trayMenu() {
   tray.setContextMenu(Menu.buildFromTemplate([
-    { label: 'Nabız panelini aç', click: () => { win.show(); win.focus(); } },
-    { label: 'Şimdi yenile', click: () => usage.refresh() },
+    { label: t('trayOpen'), click: () => { win.show(); win.focus(); } },
+    { label: t('refreshNow'), click: () => usage.refresh() },
     { type: 'separator' },
-    { label: 'Üstte sabitle', type: 'checkbox', checked: settings.pinned, click: item => setSettings({ pinned: item.checked }) },
-    { label: 'Oturum açınca başlat', type: 'checkbox', checked: settings.startAtLogin, click: item => setSettings({ startAtLogin: item.checked }) },
+    { label: t('pin'), type: 'checkbox', checked: settings.pinned, click: item => setSettings({ pinned: item.checked }) },
+    { label: t('startup'), type: 'checkbox', checked: settings.startAtLogin, click: item => setSettings({ startAtLogin: item.checked }) },
     { type: 'separator' },
-    { label: 'Çıkış', click: () => app.quit() },
+    { label: t('quit'), click: () => app.quit() },
   ]));
 }
 function trusted(event) { return event.senderFrame?.url === entryUrl; }
 function handle(channel, fn) {
   ipcMain.handle(channel, (event, ...args) => {
-    if (!trusted(event)) throw new Error('Geçersiz kaynak.');
+    if (!trusted(event)) throw new Error('Invalid source.');
     return fn(...args);
   });
 }
@@ -73,7 +76,8 @@ async function start() {
   secrets = createSecretStore(safeStorage, app.getPath('userData'), testMode ? { env: {} } : {});
   if (!testMode) { try { secrets.importEnvironment(); } catch {} }
   const saved = readJson(settingsFile, {});
-  settings = { pinned: saved.pinned !== false, startAtLogin: saved.startAtLogin === true, intervalMinutes: [2, 5, 10, 15].includes(saved.intervalMinutes) ? saved.intervalMinutes : 5, position: saved.position || null };
+  settings = { pinned: saved.pinned !== false, startAtLogin: saved.startAtLogin === true, intervalMinutes: [2, 5, 10, 15].includes(saved.intervalMinutes) ? saved.intervalMinutes : 5, position: saved.position || null, language: i18n.initialLanguage(saved, app.getPreferredSystemLanguages()[0] || app.getLocale()) };
+  try { saveSettings(); } catch {}
   const work = screen.getPrimaryDisplay().workArea;
   const width = Math.min(420, work.width), height = Math.min(880, work.height - 24);
   const desired = settings.position;
@@ -99,15 +103,15 @@ async function start() {
   handle('kota:settings', patch => setSettings(patch || {}));
   handle('kota:eleven-key', async key => {
     if (testMode) return { ok: true };
-    if (!secrets.available()) return { ok: false, message: 'Güvenli sistem anahtarlığı yok. Anahtarlığı etkinleştir veya ELEVENLABS_API_KEY ortam değişkenini kullan.' };
+    if (!secrets.available()) return { ok: false, message: t('noKeyring') };
     try {
       secrets.set(key);
       if (usage.active) await usage.active;
       usage.nextAllowed.elevenlabs = 0;
       usage.state.elevenlabs = { quotas: [], updatedAt: null, status: 'loading' };
       await usage.refresh();
-      return { ok: usage.state.elevenlabs.status === 'live', message: usage.state.elevenlabs.error };
-    } catch { return { ok: false, message: 'Anahtar kaydedilemedi. Geçerli bir API anahtarı gir.' }; }
+      return { ok: usage.state.elevenlabs.status === 'live', message: i18n.resolve(settings.language, usage.state.elevenlabs.error) };
+    } catch { return { ok: false, message: t('keyFailed') }; }
   });
   handle('kota:hide', () => win.hide());
   handle('kota:quit', () => app.quit());
@@ -115,9 +119,9 @@ async function start() {
   handle('kota:login', async id => {
     const provider = DEFINITIONS.find(p => p.id === id);
     if (!provider?.login || testMode) return;
-    const result = await dialog.showMessageBox(win, { type: 'info', title: `${provider.name} bağlantısı`, message: 'Kendi hesabını bağla', detail: `CLI kuruluysa Terminal veya PowerShell içinde şu komutu çalıştır:\n\n${provider.login}\n\nTarayıcıda giriş yaptıktan sonra Nabız’da Yenile’ye bas. CLI kurulu değilse kurulum rehberini aç.`, buttons: ['Komutu kopyala', 'Kurulum rehberi', 'Kapat'], defaultId: 0, cancelId: 2, noLink: true });
+    const result = await dialog.showMessageBox(win, { type: 'info', title: t('loginTitle', { name: provider.name }), message: t('loginMessage'), detail: t('loginDetail', { command: provider.login }), buttons: [t('copyCommand'), t('setupGuide'), t('close')], defaultId: 0, cancelId: 2, noLink: true });
     if (result.response === 0) clipboard.writeText(provider.login);
-    if (result.response === 1) await shell.openExternal(`https://github.com/TuncayASMA/nabiz/blob/main/docs/SETUP.tr.md#${id}`);
+    if (result.response === 1) await shell.openExternal(`https://github.com/TuncayASMA/nabiz/blob/main/docs/SETUP${settings.language === 'tr' ? '.tr' : ''}.md#${id}`);
     usage.nextAllowed[id] = 0;
     return { copied: result.response === 0 };
   });

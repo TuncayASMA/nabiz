@@ -1,11 +1,15 @@
-Nabız's first public desktop release: a compact usage panel for Claude,
+Nabız 0.2.1 adds English and Turkish to the desktop UI. A compact usage panel for Claude,
 ChatGPT/Codex, Gemini through Antigravity, Grok and ElevenLabs.
 
+- New installations detect the system language; change it instantly in Preferences → Language.
+- Existing Turkish installations stay Turkish. The choice survives restarts.
+- Menus, quota labels, errors, dates and numbers all follow the selected language.
+- Sharper 2× screenshots in both languages; settings remain scrollable in short windows.
 - Windows, macOS and Linux packages for x64 and ARM64.
 - Pinning, tray/menu-bar access, reset times and configurable refresh.
 - Your own accounts; no bundled API keys, telemetry or hosted backend.
 - OS-encrypted ElevenLabs storage; no insecure Linux storage fallback.
-- Turkish interface, with English and Turkish installation guides.
+- English and Turkish interface and installation guides.
 
 **Download the file matching your OS and CPU.** Windows: `setup.exe` (installer)
 or `win-*.zip` (portable). macOS: `.dmg` or `.zip`; `arm64` means Apple Silicon,

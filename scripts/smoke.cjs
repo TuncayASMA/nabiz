@@ -20,7 +20,8 @@ const assert = require('node:assert/strict');
   }
   const executablePath = release ? findReleaseExecutable('release') : null;
   if (release && !executablePath) throw new Error('Packaged executable not found');
-  const app = await electron.launch({ ...(executablePath ? { executablePath } : {}), args: [...(executablePath ? [] : ['.']), ...(live ? [] : ['--smoke']), `--data-dir=${data}`], env });
+  const launchOptions = { ...(executablePath ? { executablePath } : {}), args: [...(executablePath ? [] : ['.']), ...(live ? [] : ['--smoke']), `--data-dir=${data}`], env };
+  let app = await electron.launch(launchOptions);
   try {
     const page = await app.firstWindow();
     const errors = []; page.on('pageerror', e => errors.push(e.message));
@@ -44,6 +45,29 @@ const assert = require('node:assert/strict');
       await page.locator('#pin').click();
       assert.equal(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isAlwaysOnTop()), true);
       await page.locator('#settings-toggle').click();
+      const measurements = await page.evaluate(async () => (await window.kota.get()).providers.map(p => ({ updatedAt: p.updatedAt, used: p.quotas.map(q => q.used) })));
+      await page.locator('#language').selectOption('en');
+      await page.waitForFunction(() => document.documentElement.lang === 'en');
+      assert.equal(await page.locator('h1').textContent(), 'Your usage at a glance.');
+      assert.equal(await page.locator('#settings h2').textContent(), 'Preferences');
+      assert.equal(await page.locator('#provider-claude .quota-label').first().textContent(), '5-hour');
+      assert.match(await page.locator('#provider-elevenlabs .note').textContent(), /15,000 left/);
+      assert.equal(await page.locator('#pin').getAttribute('aria-label'), 'Always on top');
+      const afterLanguageChange = await page.evaluate(async () => (await window.kota.get()).providers.map(p => ({ updatedAt: p.updatedAt, used: p.quotas.map(q => q.used) })));
+      assert.deepEqual(afterLanguageChange, measurements);
+      assert.equal(await page.evaluate(async () => (await window.kota.settings({ language: 'unsupported' })).settings.language), 'en');
+      await page.locator('#language').selectOption('tr');
+      await page.waitForFunction(() => document.documentElement.lang === 'tr');
+      assert.equal(await page.locator('#settings h2').textContent(), 'Tercihler');
+      assert.match(await page.locator('#provider-elevenlabs .note').textContent(), /15.000 kaldı/);
+      await page.locator('#language').selectOption('en');
+      await page.waitForFunction(() => document.documentElement.lang === 'en');
+      const size = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].getSize());
+      await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setSize(360, 480));
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+      await page.locator('#quit').scrollIntoViewIfNeeded();
+      assert.equal(await page.locator('#quit').isVisible(), true);
+      await app.evaluate(({ BrowserWindow }, size) => BrowserWindow.getAllWindows()[0].setSize(...size), size);
       await page.locator('#interval').selectOption('2');
       assert.equal(await page.evaluate(async () => (await window.kota.get()).settings.intervalMinutes), 2);
       await page.locator('#startup').check();
@@ -63,6 +87,14 @@ const assert = require('node:assert/strict');
     await page.locator('#settings-toggle').click();
     await page.locator('#quit').click();
     await new Promise(resolve => setTimeout(resolve, 500));
+    if (!live) {
+      await app.close().catch(() => {});
+      app = await electron.launch(launchOptions);
+      const reopened = await app.firstWindow();
+      await reopened.waitForFunction(() => document.documentElement.lang === 'en' && document.querySelectorAll('.provider').length === 5);
+      assert.equal(await reopened.evaluate(async () => (await window.kota.get()).settings.language), 'en');
+      assert.equal(await reopened.locator('h1').textContent(), 'Your usage at a glance.');
+    }
   } finally {
     await app.close().catch(() => {});
     if (path.dirname(path.resolve(data)) !== path.resolve(os.tmpdir()) || !path.basename(data).startsWith('kota-ui-')) throw new Error('Unsafe cleanup path');

@@ -24,8 +24,8 @@ Choose your operating system and processor in [Releases](https://github.com/Tunc
 
 The first public release is **unsigned** and macOS is **not notarized**. Read the
 [OS-specific opening instructions](docs/SETUP.md#install-the-app) before installing.
-Checksums are provided with every release. The desktop UI currently uses Turkish;
-English and Turkish setup guides are available. Modern Windows, macOS and Linux
+Checksums are provided with every release. The desktop UI and setup guides support
+English and Turkish. Modern Windows, macOS and Linux
 are targeted; not every older OS or Linux desktop has been tested.
 
 ## What it shows
@@ -49,6 +49,7 @@ can change; see [compatibility notes](docs/SETUP.md#troubleshooting).
 - Five providers, official brand artwork, reset countdowns and usage bars.
 - Refresh every 2, 5, 10 or 15 minutes; rate-limit-aware retries and dated stale data.
 - Optional launch at login; per-user configuration.
+- English/Türkçe UI, system-language detection on first launch, instant switching in Settings.
 - Your accounts stay on your computer. No Nabız server, analytics or shared keys.
 - OS-encrypted ElevenLabs key storage; insecure Linux fallback is rejected.
 - Isolated demo mode and reproducible screenshots containing fictional data.
@@ -57,9 +58,13 @@ can change; see [compatibility notes](docs/SETUP.md#troubleshooting).
 
 1. Install Nabız for your OS.
 2. Install and log into the provider CLIs you use: Claude Code, Codex, Antigravity and/or Grok.
-3. Click **Hesabı bağla** (connect account) for a login command or the setup guide.
-4. For ElevenLabs, open **Tercihler** (settings), enter your own API key with User: Read access, and choose **Kaydet** (save).
-5. Click **Yenile** (refresh). Unconnected services simply show a connection prompt.
+3. Click **Connect account** for a login command or the setup guide.
+4. For ElevenLabs, open **Settings**, enter your own API key with User: Read access, and choose **Save**.
+5. Click **Refresh**. Unconnected services simply show a connection prompt.
+
+New installations use Turkish when the system's preferred language is Turkish,
+and English otherwise. Change it anytime under **Settings → Language**.
+Upgrades from the original Turkish-only version keep Turkish until you change it.
 
 **There are no API keys, accounts or subscriptions included.** You only need to
 connect the services you actually use. Full steps, uninstall instructions,
@@ -69,7 +74,7 @@ custom CLI paths, security prompts and troubleshooting:
 <details>
 <summary>Settings preview — no key entered</summary>
 
-![Nabız settings](docs/images/settings.png)
+![Nabız settings](docs/images/settings-en.png)
 
 </details>
 

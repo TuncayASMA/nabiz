@@ -9,6 +9,13 @@ kurman gerekmez**. Servislerin CLI araçlarının kendi gereksinimleri olabilir.
 Her serviste kendi hesabını ve gerekiyorsa aboneliğini kullanırsın. Beşini de
 bağlamak zorunda değilsin; kullanmadıkların bağlantı bekler.
 
+Arayüz **Türkçe ve İngilizce** destekler. İlk kurulumda sistemin tercih edilen
+dili Türkçeyse Türkçe, değilse İngilizce seçilir. Üstteki ayar simgesinden
+**Tercihler → Dil** (İngilizcede **Preferences → Language**) ile anında değiştirebilirsin.
+Seçim kaydedilir; menüler, hatalar, kota açıklamaları, tarih ve sayılar birlikte
+değişir. Hesaplarını yeniden bağlaman gerekmez. Eski Türkçe sürümden güncelleme
+yapıldığında Türkçe korunur. Uygulamanın adı iki dilde de **Nabız** kalır.
+
 İndirilecek dosyalar yalnız [bu projenin Releases sayfasındadır](https://github.com/TuncayASMA/nabiz/releases/latest).
 Intel/AMD 64 bit işlemci için `x64`; Apple Silicon, Windows ARM veya ARM Linux
 için `arm64` seç. Windows'ta Ayarlar → Sistem → Hakkında bölümünden işlemci

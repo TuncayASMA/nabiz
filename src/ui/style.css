@@ -11,3 +11,5 @@ footer{display:flex;align-items:center;justify-content:space-between;gap:6px;fle
 .provider{padding:10px 12px}.provider-head{margin-bottom:9px}.provider-logo{width:27px;height:27px}.key-form{border-top:1px solid var(--line);padding:10px 0}.key-form label{font-size:10px;display:flex;justify-content:space-between;margin-bottom:8px}.key-form label span{color:#a39aae;font-size:9px}.key-form>div{display:flex;gap:7px}.key-form input{width:100%;min-width:0;background:#18171f;color:#e2dbec;border:1px solid #ffffff19;border-radius:6px;padding:6px 8px;font-size:10px}.key-form small{display:block;font-size:9px;color:#958fa4;margin-top:7px}
 .intro{padding-bottom:11px}.provider{margin-bottom:7px}.note{margin-top:6px;padding-top:3px;border-top:0}.plan:empty{display:none}
 .brand-image{display:block;width:22px;height:22px;object-fit:contain}.brand-image.mono{filter:brightness(0) invert(1)}
+
+.settings{overflow-y:auto;min-height:0;flex-shrink:1;scrollbar-width:thin;scrollbar-color:#484650 transparent}.key-form label [data-i18n]{font-size:10px;color:inherit}

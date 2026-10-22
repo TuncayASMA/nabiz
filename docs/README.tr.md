@@ -8,7 +8,7 @@
 
 Claude, ChatGPT/Codex, Gemini, Grok ve ElevenLabs kullanımını masaüstündeki küçük
 bir panelde gösterir. Windows, macOS ve Linux için x64 ve ARM64 paketleri bulunur.
-Arayüz Türkçedir; kaynak kodu MIT lisansı ile açıktır.
+Arayüz Türkçe ve İngilizcedir; kaynak kodu MIT lisansı ile açıktır.
 
 ## Neler var?
 
@@ -16,6 +16,7 @@ Arayüz Türkçedir; kaynak kodu MIT lisansı ile açıktır.
 - Sürüklenebilir, isteğe göre üstte sabitlenen panel; sistem tepsisi/menü çubuğu.
 - 2, 5, 10 veya 15 dakikada yenileme; eski ölçümü tarihli gösterme.
 - İsteğe bağlı oturum açılışında başlatma.
+- İlk açılışta sistem dilini algılama; **Ayarlar → Dil** ile anında Türkçe/English geçişi.
 - Beş servisin gerçek logoları ve ayrı model havuzları.
 - Yerel çalışma; Nabız sunucusu, analitik veya ortak API anahtarı yok.
 - ElevenLabs anahtarını sistem anahtarlığı ile şifreleme.
@@ -27,6 +28,9 @@ Arayüz Türkçedir; kaynak kodu MIT lisansı ile açıktır.
 3. Kullandığın servislerin CLI uygulamalarını kurup **kendi hesabınla** giriş yap.
 4. ElevenLabs kullanıyorsan kendi API anahtarını Nabız ayarlarına ekle.
 5. **Yenile** düğmesine bas.
+
+Yeni kurulum, sistemin tercih edilen dili Türkçeyse Türkçe; diğer dillerde İngilizce
+açılır. Dil seçimi kaydedilir. Önceki Türkçe sürümden güncellenen kurulumlar Türkçe kalır.
 
 **Paketlerde hesap, abonelik veya API anahtarı bulunmaz.** Yalnız kullandığın
 servisleri bağlayabilirsin. İlk sürüm imzasızdır; macOS notarizasyonu yoktur.
