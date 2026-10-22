@@ -85,8 +85,16 @@ const assert = require('node:assert/strict');
     assert.equal(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isVisible()), false);
     await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].show());
     await page.locator('#settings-toggle').click();
-    await page.locator('#quit').click();
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // A fast Linux exit can close CDP before Playwright acknowledges the click.
+    // Require a clean process exit; only tolerate that specific transport race.
+    const processExited = new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => reject(new Error('Quit did not stop the app')), 10000);
+      app.process().once('exit', (code, signal) => { clearTimeout(timeout); resolve({ code, signal }); });
+    });
+    const [clicked, exited] = await Promise.allSettled([page.locator('#quit').click(), processExited]);
+    if (exited.status === 'rejected') throw exited.reason;
+    assert.deepEqual(exited.value, { code: 0, signal: null });
+    if (clicked.status === 'rejected') assert.match(clicked.reason.message, /Target page, context or browser has been closed/);
     if (!live) {
       await app.close().catch(() => {});
       app = await electron.launch(launchOptions);

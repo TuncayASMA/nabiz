@@ -20,11 +20,12 @@ const assert = require('node:assert/strict');
     for (const language of ['tr', 'en']) {
       await page.evaluate(language => window.kota.settings({ language }), language);
       await page.waitForFunction(language => document.documentElement.lang === language, language);
+      await page.evaluate(async () => { await document.fonts.ready; await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))); });
       const suffix = language === 'tr' ? '' : '-en';
-      await page.screenshot({ path: path.join(output, `overview${suffix}.png`), scale: 'device' });
+      await page.screenshot({ path: path.join(output, `overview${suffix}.png`), scale: 'device', animations: 'disabled' });
       await page.locator('#settings-toggle').click();
       await page.locator('#providers').evaluate(element => { element.style.visibility = 'hidden'; });
-      await page.locator('#settings').screenshot({ path: path.join(output, `settings${suffix}.png`), scale: 'device' });
+      await page.locator('#settings').screenshot({ path: path.join(output, `settings${suffix}.png`), scale: 'device', animations: 'disabled' });
       await page.locator('#providers').evaluate(element => { element.style.visibility = ''; });
       await page.locator('#settings-toggle').click();
     }

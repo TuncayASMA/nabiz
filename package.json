@@ -1,7 +1,7 @@
 {
   "name": "nabiz",
   "productName": "Nabız",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A private desktop usage monitor for Claude, Codex, Gemini, Grok and ElevenLabs",
   "private": true,
   "main": "src/main.cjs",

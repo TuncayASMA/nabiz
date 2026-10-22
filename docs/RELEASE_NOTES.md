@@ -1,4 +1,4 @@
-Nabız 0.2.1 adds English and Turkish to the desktop UI. A compact usage panel for Claude,
+Nabız 0.2.2 adds English and Turkish to the desktop UI. A compact usage panel for Claude,
 ChatGPT/Codex, Gemini through Antigravity, Grok and ElevenLabs.
 
 - New installations detect the system language; change it instantly in Preferences → Language.
